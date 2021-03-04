@@ -1,35 +1,31 @@
-var exp = require('express');
-var app = exp();
-var path = require('path');
-var bodyParser = require('body-parser');
-var cookie = require('cookie-parser');
+const express = require('express');
+const app = express();
+const path = require('path');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const PORT = process.env.PORT || 3000;
+const routes = require('./routes');
+const router = require('express').Router();
 
-mongoose.connect('mongodb://127.0.0.1:27017/urlshort');
+mongoose.connect('mongodb://127.0.0.1:27017/urlshort', { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connection.on('connected', function(){
-    console.log('Database connected successfully...');
-});
+mongoose.connection.on('connected', () => console.log('Database connected successfully...'));
 
-mongoose.connection.on('error', function(err){
-    console.log('Error...!!!! Unsuccessful connection...!!!', err);
-});
+mongoose.connection.on('error', (err) => console.log('Connection error!!!'));
 
-//view engine setup
-app.set('view', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
+mongoose.connection.on('disconnected', () => console.log('Database disconnected..!'));
 
-app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/", routes);
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
     next();
 });
 
-module.exports = app;
+app.listen(PORT, () => console.log(`Node server listening @ http://localhost:${PORT}`));
+
+module.exports = router;

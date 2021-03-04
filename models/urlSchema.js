@@ -1,28 +1,24 @@
-var mon = require('mongoose');
-var Schema = mon.Schema;
-var muv = require('mongoose-unique-validator');
-//var validate = require('mongoose-validator');
-//const format = require('node.date-time');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const muv = require('mongoose-unique-validator');
 
-var url = new Schema({
-    _id: {
-        type: Number,
-        index:true, 
+const urlSchema = new Schema({
+    originalUrl: {
+        type: String,
         required: true
     },
-    orgurl: { 
-        type: String, 
-        required: true 
-    },
-    shorturl: {
-        type: String, 
+    shortUrl: {
+        type: String,
         required: true
     },
-    date: Date
+    timeStamp: {
+        type: Date,
+        required: true
+    }
 });
 
 //validate or throw err if not unique/valid
-url.plugin(muv);
+urlSchema.plugin(muv);
 
 //export models
-module.exports = mongoose.model('dbname', urlschema);
+module.exports = mongoose.model('dbname', urlSchema);
